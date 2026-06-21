@@ -1,0 +1,633 @@
+/* ==========================================================================
+   Základní nastavení a pozadí stránky
+   ========================================================================== */
+body {
+    background-color: #ffffff;
+    background-image: 
+        radial-gradient(at 50% 0%, rgba(255, 85, 0, 0.05) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(0, 102, 204, 0.03) 0px, transparent 50%);
+    color: #000000;
+    font-family: 'Aptos Display', 'Aptos', 'Inter', system-ui, -apple-system, sans-serif;
+    font-size: 15px;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+/* Hlavní rozvržení s jemným stínem pro čistý kontrast */
+.layout {
+    display: flex;
+    max-width: 1450px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: #ffffff;
+    box-shadow: 0 0 40px rgba(15, 23, 42, 0.05);
+}
+
+/* ==========================================================================
+   Sidebar (Herní info panel) - Čisté bílé sklo
+   ========================================================================== */
+.sidebar {
+    width: 340px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(15, 23, 42, 0.06); 
+    display: flex; 
+    flex-direction: column;
+    padding: 35px 25px;
+    box-sizing: border-box;
+    flex-shrink: 0;
+}
+
+#sidebar-ui {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+#sidebar-ui h3 {
+    font-size: 23px;
+    letter-spacing: -0.5px;
+    margin: 15px 0 5px 0;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+/* Výpis gólů (Zápasový ticker) */
+.goal-log {
+    background: #f8fafc;
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 20px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.goal-log h3 {
+    margin-top: 0;
+    color: #515151;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid rgba(255, 85, 0, 0.15);
+    padding-bottom: 8px;
+    text-align: center;
+}
+
+.goal-entry {
+    font-size: 14px;
+    padding: 9px 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
+    line-height: 1.4;
+    color: #334155;
+}
+
+.goal-entry b {
+    color: #0f172a;
+}
+
+.goal-asst {
+    font-size: 12px;
+    color: #64748b;
+    font-style: italic;
+    display: block;
+    margin-top: 2px;
+}
+
+/* ==========================================================================
+   Tlačítka (Plochý design a herní černá)
+   ========================================================================== */
+.btn {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid rgba(15, 23, 42, 0.04);
+    padding: 14px 20px;
+    font-weight: 700;
+    font-size: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.btn:hover {
+    background: #e2e8f0;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+}
+
+.play-btn {
+    background: linear-gradient(135deg, #000000 0%, #000000 100%);
+    border: none;
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 16px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+    margin-bottom: 10px;
+}
+
+.play-btn:hover {
+    background: linear-gradient(135deg, #111111 0%, #111111 100%);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.3);
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   Hlavní panel a Scoreboard
+   ========================================================================== */
+.main {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f8fafc;
+    overflow-y: auto;
+}
+
+.nhl-scoreboard {
+    background: #ffffff;
+    width: 100%;
+    max-width: 980px;
+    padding: 22px 40px;
+    border-radius: 20px;
+    margin-bottom: 30px;
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+    box-sizing: border-box;
+}
+
+.score-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.score-row > div:first-child, 
+.score-row > div:last-child {
+    width: 140px;
+}
+
+.score-row img {
+    height: 68px;
+    object-fit: contain;
+    margin-bottom: 6px;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.04));
+}
+
+.score-big {
+    font-size: 48px;
+    font-weight: 800;
+    background: #0f172a;
+    color: #ffffff;
+    padding: 4px 32px;
+    border-radius: 12px;
+    letter-spacing: 1px;
+}
+
+.shots-label {
+    text-align: center;
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+/* ==========================================================================
+   Hřiště a rozestavení lajn
+   ========================================================================== */
+#field {
+    display: flex;
+    width: 100%;
+    max-width: 980px;
+    height: 530px;
+    background-color: #ffffff;
+    border: 4px solid #cbd5e1;
+    border-radius: 40px;
+    overflow: hidden;
+    margin-bottom: 25px;
+    box-shadow: inset 0 0 40px rgba(15, 23, 42, 0.01), 0 15px 40px rgba(15, 23, 42, 0.04);
+    position: relative;
+    box-sizing: border-box;
+}
+
+.field-half {
+    flex: 1;
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px 10px;
+    box-sizing: border-box;
+    z-index: 2;
+    position: relative;
+}
+
+.field-half:last-child {
+    flex-direction: column; 
+}
+
+.field-half > div {
+    width: 100%;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    min-height: 50px;
+}
+
+/* ==========================================================================
+   Kartičky hráčů (Pilulkový design)
+   ========================================================================== */
+.player-pos {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
+    border: 1px solid #e2e8f0;
+    padding: 6px 14px 6px 6px;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 140px; 
+    max-width: 190px; 
+    width: auto;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1e293b;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.player-pos:hover {
+    transform: translateY(-2px);
+    background: #ffffff;
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.player-photo {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #f1f5f9;
+    border: 2px solid #cbd5e1;
+    flex-shrink: 0;
+}
+
+.ovr {
+    margin-left: auto;
+    background: #f1f5f9;
+    color: #475569;
+    padding: 3px 6px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+}
+
+/* Ohraničení podle příslušnosti k domácím/hostům */
+.field-half:first-child .player-pos { border-color: rgba(0, 0, 0, 0.2); }
+.field-half:first-child .player-pos:hover { border-color: #000000; }
+.field-half:first-child .player-photo { border-color: #000000; }
+
+.field-half:last-child .player-pos { border-color: rgba(0, 102, 204, 0.2); }
+.field-half:last-child .player-pos:hover { border-color: #0066cc; }
+.field-half:last-child .player-photo { border-color: #0066cc; }
+
+/* ==========================================================================
+   Tabulky a Statistiky
+   ========================================================================== */
+h2 {
+    width: 100%;
+    max-width: 980px;
+    text-align: left;
+    font-size: 25px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin: 35px 0 18px 0;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    color: #0f172a;
+}
+
+table {
+    width: 100%;
+    max-width: 980px;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+    margin-bottom: 30px;
+}
+
+th, td {
+    padding: 16px 22px;
+    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+th {
+    background: #1f2c38;
+    color: #64748b;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+td {
+    font-size: 19px;
+    color: #334155;
+}
+
+tr:hover td {
+    background: #f8fafc;
+}
+
+.mini-logo {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 12px;
+}
+
+.highlight {
+    background: rgba(255, 85, 0, 0.04) !important;
+}
+
+.highlight td {
+    color: #000000;
+    font-weight: 700;
+}
+
+.po-border td {
+    border-bottom: 2px solid rgba(0, 0, 0, 0.25) !important;
+}
+
+td b {
+    color: #0f172a;
+}
+
+/* ==========================================================================
+   Úvodní Výběr Týmu (Carousel) - Čistý design
+   ========================================================================== */
+.selector-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    width: 100%;
+    background: #ececec;
+    gap: 20px; /* Mezera mezi nadpisem, kartou a hráčem */
+}
+
+.selector-container h1 {
+    font-size: 34px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin: 0 0 10px 0;
+    color: #0f172a;
+}
+
+.carousel {
+    display: flex;
+    align-items: center;
+    gap: 45px;
+}
+
+.carousel .team-card {
+    background: #ffffff !important;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    padding: 40px;
+    border-radius: 24px;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 15px 35px rgba(15, 23, 42, 0.04);
+    transition: all 0.3s ease;
+    width: 250px; /* Kartu týmu můžeme nechat o něco kompaktnější */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.carousel .team-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.carousel .team-card .team-logo-img {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    margin-bottom: 20px;
+}
+
+.carousel .team-card h2 {
+    border: none;
+    text-align: center;
+    margin: 0;
+    font-size: 24px;
+    color: #0f172a !important;
+    font-weight: 800;
+}
+
+/* ==========================================================================
+   NOVÁ: Velká samostatná hráčská vizitka pod kartou
+   ========================================================================== */
+.big-star-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+    width: 200%;
+    max-width: 330px; /* Širší než karta, aby se jméno krásně rozprostřelo */
+}
+
+.big-star-label {
+    font-size: 12px;
+    font-weight: 900;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+}
+
+.big-player-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: #ffffff;
+    padding: 16px 24px;
+    border-radius: 20px;
+    border: 1px solid rgba(15, 23, 42, 0.06);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Obří fotka (zvětšená z původních 42px na 80px) */
+.big-player-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #f1f5f9;
+    border: 3px solid #0f172a; /* Výrazný hokejový tmavý lem */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.big-star-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+/* Velké čitelné jméno */
+.big-star-name {
+    font-size: 27px;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+}
+
+/* Masivní zářivé OVR hodnocení */
+.big-star-ovr {
+    font-size: 24px;
+    font-weight: 900;
+    color: #000000;
+}
+
+.big-star-ovr small {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-left: 2px;
+}
+
+/* Šipky karuselu */
+.arrow {
+    font-size: 40px;
+    color: #383839;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.arrow:hover {
+    color: #000000;
+    transform: scale(1.15);
+}
+
+/* ==========================================================================
+   Scrollbary a doplňky
+   ========================================================================== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Stylování pro ikonku poháru */
+.club-trophy-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #fef08a;
+    border: 2px solid #fde047;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+
+/* Úprava textu u počtu titulů */
+.titles-count {
+    color: #eab308;
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.titles-count small {
+    color: #64748b;
+}
+
+.titles-label-name {
+    font-size: 0.95rem;
+}
+/* Styling pro vizitku příštího zápasu */
+h7 {
+    color: rgb(255, 255, 255);
+}
+.next-match-banner {
+    background: #ffffff;
+    width: 100%;
+    max-width: 980px;
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid rgba(15, 23, 42, 0.05);
+    box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03);
+    margin-bottom: 30px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.next-match-header {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.next-match-teams {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+}
+
+.next-match-logo {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.next-match-vs {
+    font-size: 14px;
+    font-weight: 800;
+    color: #0f172a;
+    background: #f1f5f9;
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+
+.next-match-names {
+    margin-top: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 16px;
+}

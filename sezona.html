@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+
+<html lang="cs">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Extraliga Hokejbalu</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div id="app"></div>
+
+
+
+<script>
+
+function formatFileName(name) {
+
+    if (name === "Mi. Schnaubelt") return "hraci/schnaubeltm.jpg";
+
+    if (name === "M. Schnaubelt") return "hraci/schnaubelt.jpg";
+
+    if (name === "D. Gruss") return "hraci/grussd.jpg";
+
+    if (name === "T. Gruss") return "hraci/gruss.jpg";
+
+    if (name === "M. Molnár") return "hraci/molnarm.jpg";
+
+    if (name === "I. Molnár") return "hraci/molnar.jpg";
+
+    if (name === "Š. Molnár") return "hraci/molnars.jpg";
+
+    if (name === "S. Volf") return "hraci/volf.jpg";
+
+    if (name === "L. Volf") return "hraci/volfl.jpg";
+
+   
+
+    let cleanName = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
+    let surname = cleanName.split('.').pop().trim();
+
+    return `hraci/${surname}.jpg`;
+
+}
+
+
+
+    const TEAMS_DATA = {
+
+        "SK Jihlava": { abbr: "JIH", logo: "loga/jihlava.png",titles: 1, players: [{n:"L. Čára", ovr:84, p:"G"}, {n:"M. Hora", ovr:75, p:"D"}, {n:"Š. Habermann", ovr:86, p:"D"}, {n:"P. Král", ovr:77, p:"F"}, {n:"L. Moravský", ovr:75, p:"F"}, {n:"J. Ileček", ovr:82, p:"F"}] },
+
+        "HBC Hostivař": { abbr: "HOS", logo: "loga/hostivar.png",titles: 2, players: [{n:"V. Mokrý", ovr:92, p:"G"}, {n:"J. Markytán", ovr:90, p:"D"}, {n:"J. Hrabár", ovr:89, p:"D"}, {n:"S. Kucharčík", ovr:94, p:"F"}, {n:"J. Čejka", ovr:98, p:"F"}, {n:"T. Šmerha", ovr:90, p:"F"}] },
+
+        "Eagles Brno": { abbr: "BRN", logo: "loga/brno.png", players: [{n:"P. Staníček", ovr:68, p:"G"}, {n:"M. Zíma", ovr:77, p:"D"}, {n:"M. Vavrů", ovr:76, p:"D"}, {n:"D. Gruss", ovr:86, p:"F"}, {n:"S. Volf", ovr:84, p:"F"}, {n:"L. Volf", ovr:87, p:"F"}] },
+
+        "Ježci Heřmanův Městec": { abbr: "JEZ", logo: "loga/jezci.webp", players: [{n:"T. Gruss", ovr:90, p:"G"}, {n:"F. Kovář", ovr:89, p:"D"}, {n:"T. Roztočil", ovr:87, p:"D"}, {n:"V. Kachlík", ovr:90, p:"F"}, {n:"J. Sedlák", ovr:89, p:"F"}, {n:"M. Řivnáč", ovr:88, p:"F"}] },
+
+        "HBC Kladno": { abbr: "KLA", logo: "loga/kladno.png",titles: 6, players: [{n:"M. Jakoubek", ovr:88, p:"G"}, {n:"M. Drechsler", ovr:90, p:"D"}, {n:"R. Soukup", ovr:88, p:"D"}, {n:"M. Schnaubelt", ovr:92, p:"F"}, {n:"Mi. Schnaubelt", ovr:90, p:"F"}, {n:"M. Daníček", ovr:93, p:"F"}] },
+
+        "HBC Pardubice": { abbr: "PCE", logo: "loga/pardubice.png",titles: 1, players: [{n:"P. Forst", ovr:89, p:"G"}, {n:"F. Kamaryt", ovr:89, p:"D"}, {n:"J. Strouhal", ovr:87, p:"D"}, {n:"N. Langr", ovr:91, p:"F"}, {n:"J. Bílý", ovr:93, p:"F"}, {n:"T. Kupka", ovr:89, p:"F"}] },
+
+        "HC Kert Park Praha": { abbr: "KER", logo: "loga/kert.png",titles: 7, players: [{n:"L. Gerlich", ovr:91, p:"G"}, {n:"J. Blaško", ovr:89, p:"D"}, {n:"R. Peschout", ovr:88, p:"D"}, {n:"T. Wróbel", ovr:90, p:"F"}, {n:"V. Jágr", ovr:91, p:"F"}, {n:"D. Zvonek", ovr:89, p:"F"}] },
+
+        "HBC Hradec Králové 1988": { abbr: "HRA", logo: "loga/hradec.png", players: [{n:"O. Charvát", ovr:90, p:"G"}, {n:"V. Musílek", ovr:90, p:"D"}, {n:"Š. Palán", ovr:91, p:"D"}, {n:"Š. Bohatý", ovr:86, p:"F"}, {n:"P. Bakus", ovr:89, p:"F"}, {n:"J. Pilař", ovr:90, p:"F"}] },
+
+        "SK Hokejbal Letohrad": { abbr: "LET", logo: "loga/letohrad.webp", players: [{n:"M. Novák", ovr:89, p:"G"}, {n:"M. Nazad", ovr:88, p:"D"}, {n:"J. Bečka", ovr:87, p:"D"}, {n:"T. Lux", ovr:90, p:"F"}, {n:"M. Macháček", ovr:91, p:"F"}, {n:"V. Rozlílek", ovr:91, p:"F"}] },
+
+        "HBC Svítkov Stars Pardubice": { abbr: "SVI", logo: "loga/svitkov.png", players: [{n:"L. Novotný", ovr:91, p:"G"}, {n:"M. Korbel", ovr:87, p:"D"}, {n:"M. Kubíček", ovr:92, p:"D"}, {n:"M. Bláha", ovr:91, p:"F"}, {n:"J. Stromko", ovr:89, p:"F"}, {n:"T. Kantor", ovr:88, p:"F"}] },
+
+        "HBC Plzeň": { abbr: "PLZ", logo: "loga/plzen.png",titles: 2, players: [{n:"K. Kolář", ovr:88, p:"G"}, {n:"T. Chramosta", ovr:88, p:"D"}, {n:"D. Král", ovr:87, p:"D"}, {n:"M. Švarc", ovr:91, p:"F"}, {n:"V. Lokajíček", ovr:90, p:"F"}, {n:"D. Němčák", ovr:87, p:"F"}] },
+
+        "TJ Snack Dobřany": { abbr: "DOB", logo: "loga/dobrany.png", players: [{n:"T. Humlíček", ovr:90, p:"G"}, {n:"T. Duchek", ovr:87, p:"D"}, {n:"J. Kolařík", ovr:88, p:"D"}, {n:"M. Pavlíček", ovr:92, p:"F"}, {n:"V. Šlehofer", ovr:91, p:"F"}, {n:"J. Štěpánek", ovr:89, p:"F"}] },
+
+        "Nedělní Odreagování": { abbr: "NOD", logo: "loga/odreagovani.png", players: [{n:"L. Doležal", ovr:65, p:"G"}, {n:"E. Krainer", ovr:68, p:"D"}, {n:"V. Hons", ovr:68, p:"D"}, {n:"M. Molnár", ovr:54, p:"F"}, {n:"Š. Molnár", ovr:61, p:"F"}, {n:"I. Molnár", ovr:48, p:"F"}] },
+
+        "JVSK Slza Okříšky": { abbr: "OKR", logo: "loga/okrisky.png", players: [{n:"R. Musil", ovr:70, p:"G"}, {n:"M. Pysk", ovr:82, p:"D"}, {n:"J. Zeman", ovr:85, p:"D"}, {n:"M. Mejzlík", ovr:89, p:"F"}, {n:"D. Fiala", ovr:85, p:"F"}, {n:"M. Dočekal", ovr:85, p:"F"}] }
+
+    };
+
+
+
+    let db = JSON.parse(localStorage.getItem('hokejbal_v22')) || {
+
+        userTeam: null, currentRound: 0, matchPlayed: false,
+
+        playoffStage: 0, playoffPairs: [], playoffWinners: [],
+
+        finaleWinner: null, teams: {}, seasonWinners: [],
+
+        lastResult: { hS: 0, aS: 0, hSh: 0, aSh: 0 }
+
+    };
+
+
+
+    if (Object.keys(db.teams).length === 0) {
+
+        Object.keys(TEAMS_DATA).forEach(t => {
+
+            db.teams[t] = {
+
+                ...TEAMS_DATA[t], v:0, p:0, pts:0, gf:0, ga:0, shotsAgainst:0,
+
+                roster: TEAMS_DATA[t].players.map(p => ({ ...p, g:0, a:0 }))
+
+            };
+
+        });
+
+    }
+
+
+
+    let selectedIdx = 0;
+
+function render() {
+
+if (!db.userTeam) {
+
+    const names = Object.keys(db.teams);
+
+    const activeTeam = db.teams[names[selectedIdx]];
+
+   
+
+    // 1. Najdeme nejlepšího hráče týmu podle OVR
+
+    const bestPlayer = activeTeam.players.reduce((best, current) => {
+
+        return (current.ovr > best.ovr) ? current : best;
+
+    }, activeTeam.players[0]);
+
+   
+
+    // 2. VRÁCENO ZPĚT: Tvoje původní originální cesta k fotce
+
+    const playerPhotoSrc = formatFileName(bestPlayer.n);
+
+   
+
+    document.getElementById('app').innerHTML = `
+
+        <div class="selector-container">
+
+            <h1>VYBER SI TÝM</h1>
+
+           
+
+            <div class="carousel">
+
+                <div class="arrow" onclick="changeSelected(-1)">❮</div>
+
+               
+
+                <div class="team-card" onclick="confirmTeam('${names[selectedIdx]}')">
+
+                    <img src="${activeTeam.logo}" class="team-logo-img">
+
+                    <h2>${names[selectedIdx]}</h2>
+
+                </div>
+
+               
+
+                <div class="arrow" onclick="changeSelected(1)">❯</div>
+
+            </div>
+
+
+
+            <div class="big-star-section">
+
+                <span class="big-star-label">NEJLEPŠÍ HRÁČ</span>
+
+                <div class="big-player-card">
+
+                    <img src="${playerPhotoSrc}" class="big-player-photo" onerror="this.src='hraci/default.jpg'">
+
+                    <div class="big-star-info">
+
+                        <span class="big-star-name">${bestPlayer.n}</span>
+
+                        <span class="big-star-ovr">${bestPlayer.ovr} <small>OVR</small></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="big-star-section" style="margin-top: 15px;">
+
+                <span class="big-star-label">ÚSPĚCHY KLUBU</span>
+
+                <div class="big-player-card">
+
+                    <div style="width: 40px; height: 40px; border-radius: 50%; background: #fef08a; border: 2px solid #fde047; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0;">🏆</div>
+
+                    <div class="big-star-info" style="margin-left: 12px; display: flex; flex-direction: column; justify-content: center;">
+
+                        <span class="big-star-name" style="font-size: 0.95rem;">Mistrovské tituly</span>
+
+                        <span class="big-star-ovr" style="color: #eab308; font-size: 0.85rem; font-weight: 800;">
+
+                            ${activeTeam.titles ? activeTeam.titles : 0} <small style="color: #64748b;">TITULŮ</small>
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+        </div>`;
+
+    return;
+
+}
+
+
+
+    // --- Výpočet kola a soupeřů (OPRAVENO na 13 kol + ochrana proti zápasu sám se sebou) ---
+
+    let currentOpponent = "WATCH";
+
+    let stageTitle = `KOLO ${db.currentRound + 1} / 13`; // Změněno z 26 na 13
+
+   
+
+    if (db.playoffStage === 1) stageTitle = "ČTVRTFINÁLE";
+
+    if (db.playoffStage === 2) stageTitle = "SEMIFINÁLE";
+
+    if (db.playoffStage === 3) stageTitle = "FINÁLE";
+
+    if (db.finaleWinner) return showWinnerScreen();
+
+
+
+    if (db.playoffStage === 0) {
+
+        // Pokud se odehraje 13 kol, spustí se play-off
+
+        if (db.currentRound >= 13) { initPlayoff(); return render(); }
+
+       
+
+        let tNames = Object.keys(db.teams);
+
+        let myIdx = tNames.indexOf(db.userTeam);
+
+       
+
+        // Vzorec pro výpočet soupeře
+
+        let oppIdx = (myIdx + db.currentRound + 1) % tNames.length;
+
+       
+
+        // OCHRANA: Pokud by měl hrát tým sám se sebou, vezme se následující tým v pořadí
+
+        if (tNames[oppIdx] === db.userTeam) {
+
+            oppIdx = (oppIdx + 1) % tNames.length;
+
+        }
+
+       
+
+        currentOpponent = tNames[oppIdx];
+
+    } else {
+
+        let myPair = db.playoffPairs.find(p => p.includes(db.userTeam));
+
+        if (myPair) currentOpponent = myPair.find(t => t !== db.userTeam);
+
+    }
+
+
+
+    document.getElementById('app').innerHTML = `
+
+        <div class="layout">
+
+            <div class="sidebar">
+
+                <div id="side-goals"></div>
+
+                <div id="sidebar-ui">
+
+                    <img src="${db.teams[db.userTeam].logo}" style="width:60px; display:block; margin:auto;">
+
+                    <h3 style="text-align:center;">${db.userTeam}</h3>
+
+                    <p style="text-align:center; color:#ff6600; font-weight:bold">${stageTitle}</p>
+
+                    ${renderButton(currentOpponent)}
+
+                    ${db.playoffStage === 0 && !db.matchPlayed ? '<button class="btn" onclick="simulateWholeSeason()" style="background: #1e293b; color: #f8fafc; border: 1px solid #334155;">ODSIMULOVAT SKUPINU</button>' : ''}
+
+                    <button class="btn" onclick="showStandings()">TABULKA</button>
+
+                    <button class="btn" onclick="showStats()">STATISTIKY</button>
+
+                    <button class="btn" onclick="resetSeason()" style="margin-top:20px; font-size:10px; opacity:0.3">RESET</button>
+
+                </div>
+
+            </div>
+
+            <div class="main" id="view"></div>
+
+        </div>`;
+
+   
+
+// PŮVODNÍ BLOK NA KONCI FUNKCE render() NAHRAĎ TÍMTO:
+
+    if (db.matchPlayed && currentOpponent !== "WATCH") {
+
+        showMatchEnd(currentOpponent);
+
+    } else if (db.playoffStage > 0) {
+
+        // ZMĚNA: V play-off (i po odehrání nebo simulaci zápasu) vždy ukážeme pavouka, ne tabulku!
+
+        showPlayoffBrackets();
+
+    } else {
+
+        showStandings();
+
+    }
+
+}
+
+
+
+   function renderButton(opp) {
+
+    // Pokud jsme na konci 13. kola základní části, tlačítko nás posune do play-off
+
+    if (db.playoffStage === 0 && db.currentRound >= 13) {
+
+        return '<button class="btn play-btn" style="background: #e11d48;" onclick="advanceRound()">SPUSTIT PLAY-OFF 🏆</button>';
+
+    }
+
+   
+
+    if (db.matchPlayed) return '<button class="btn play-btn" onclick="advanceRound()">POKRAČOVAT</button>';
+
+    if (opp === "WATCH") return '<button class="btn play-btn" onclick="simulateRoundOnly()">SIMULOVAT KOLO</button>';
+
+    return `<button class="btn play-btn" onclick="startMatch('${opp}')">HRÁT ZÁPAS</button>`;
+
+}
+
+function simulateWholeSeason() {
+
+    // Dokud nejsme na konci 13. kola, budeme simulovat jedno kolo za druhým
+
+    while (db.currentRound < 13 && db.playoffStage === 0) {
+
+        let tNames = Object.keys(db.teams);
+
+        let myIdx = tNames.indexOf(db.userTeam);
+
+       
+
+        // Zjistíme, kdo je v tomto kole soupeřem hráče
+
+        let oppIdx = (myIdx + db.currentRound + 1) % tNames.length;
+
+        if (tNames[oppIdx] === db.userTeam) {
+
+            oppIdx = (oppIdx + 1) % tNames.length;
+
+        }
+
+        let currentOpponent = tNames[oppIdx];
+
+
+
+        // 1. Odsimulujeme zápas uživatele
+
+        quickSim(db.userTeam, currentOpponent);
+
+
+
+        // 2. Odsimulujeme zápasy všech ostatních týmů v tomto kole
+
+        let others = Object.keys(db.teams).filter(t => t !== db.userTeam && t !== currentOpponent).sort(() => Math.random() - 0.5);
+
+        while(others.length >= 2) {
+
+            quickSim(others.shift(), others.shift());
+
+        }
+
+
+
+        // Posuneme počítadlo kol dopředu
+
+        db.currentRound++;
+
+    }
+
+
+
+    // Jakmile dojedeme na konec 13. kola, uložíme stav, vyčistíme logy gólů
+
+    db.matchPlayed = false;
+
+    document.getElementById('side-goals').innerHTML = "";
+
+    save();
+
+   
+
+    // Vykreslíme rozhraní a rovnou uživateli ukážeme finální tabulku skupiny
+
+    render();
+
+    showStandings();
+
+}
+
+    function initPlayoff() {
+
+        db.playoffStage = 1;
+
+        let sorted = Object.keys(db.teams).map(n => ({n, ...db.teams[n]})).sort((a,b) => b.pts - a.pts || (b.gf-b.ga)-(a.gf-a.ga));
+
+        db.seasonWinners = [sorted[0].n, sorted[1].n];
+
+        db.playoffPairs = [[sorted[2].n, sorted[5].n], [sorted[3].n, sorted[4].n]];
+
+        db.playoffWinners = [];
+
+        save();
+
+    }
+
+
+
+function startMatch(opp) {
+    document.getElementById('view').innerHTML = `
+        <div class="nhl-scoreboard" style="padding: 40px 20px;">
+            <div class="score-row">
+                <div><img src="${db.teams[db.userTeam].logo}" style="width:70px"><br><b style="font-size: 1.2em;">${db.teams[db.userTeam].abbr}</b></div>
+                <div class="score-big" id="l-score" style="font-size: 48px; margin: 10px 0;">0 - 0</div>
+                <div><img src="${db.teams[opp].logo}" style="width:70px"><br><b style="font-size: 1.2em;">${db.teams[opp].abbr}</b></div>
+            </div>
+            <div class="shots-label" id="l-shots" style="font-size: 1.1em; margin-top: 15px;">STŘELY: 0 - 0</div>
+        </div>
+        
+        <div id="field">
+            <div class="field-half">${renderRoster(db.userTeam)}</div>
+            <div class="field-half" style="border-left:1px dashed #333">${renderRoster(opp)}</div>
+        </div>
+        
+        <div id="button-container" style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
+            <button class="btn play-btn" id="sim-btn" onclick="resolveMatch('${db.userTeam}', '${opp}')">RYCHLÁ SIMULACE</button>
+            <button class="btn play-btn" id="live-btn" style="background: #22c55e;" onclick="startLiveMatch('${db.userTeam}', '${opp}')">POMALÁ SIMULACE</button>
+        </div>
+        <div id="side-goals"></div>`;
+}
+
+function startLiveMatch(h, a) {
+    document.getElementById('button-container').innerHTML = '<p>Zápas probíhá...</p>';
+    
+    const getPower = (tn) => db.teams[tn].roster.reduce((sum, p) => sum + p.ovr, 0) / 6;
+    const calcChance = (off, def) => (off / (def * 1.08)) * 0.088;
+    
+    let minute = 0;
+    let hS = 0, aS = 0;
+    let hSh = 0, aSh = 0;
+    const totalShotsH = 18 + Math.floor(Math.random() * 15);
+    const totalShotsA = 18 + Math.floor(Math.random() * 15);
+    const chanceH = calcChance(getPower(h), db.teams[a].roster[0].ovr);
+    const chanceA = calcChance(getPower(a), db.teams[h].roster[0].ovr);
+
+    document.getElementById('side-goals').innerHTML = `<div class="goal-log"><h3>GÓLY</h3></div>`;
+
+    let liveSim = setInterval(() => {
+        minute += 2;
+        
+        const processGoal = (team, isHome) => {
+            let players = db.teams[team].roster.filter((_, i) => i > 0);
+            let s = players[Math.floor(Math.random() * players.length)];
+            s.g++;
+            let assts = [];
+            // První asistence
+            if (Math.random() < 0.9) {
+                let a1 = players[Math.floor(Math.random() * players.length)];
+                if (a1.n !== s.n) { a1.a++; assts.push(a1.n); }
+                // Druhá asistence
+                if (Math.random() < 0.7) {
+                    let a2 = players[Math.floor(Math.random() * players.length)];
+                    if (a2.n !== s.n && a2.n !== a1.n) { a2.a++; assts.push(a2.n); }
+                }
+            }
+            
+            // Výpis do logu
+            let log = document.querySelector('.goal-log');
+            log.innerHTML += `<div class="goal-entry"><img src="${db.teams[team].logo}" class="mini-logo"> <b>${s.n}</b><br><span class="goal-asst">Asist: ${assts.join(', ') || '---'}</span></div>`;
+        };
+
+        if (hSh < totalShotsH && Math.random() < 0.8) {
+            hSh++;
+            if (Math.random() < chanceH) { hS++; processGoal(h); }
+        }
+        if (aSh < totalShotsA && Math.random() < 0.9) {
+            aSh++;
+            if (Math.random() < chanceA) { aS++; processGoal(a); }
+        }
+
+        document.getElementById('l-score').innerHTML = `<div style="font-size: 14px; color: #64748b; margin-bottom: 5px;">${minute}. MINUTA</div>${hS} - ${aS}`;
+        document.getElementById('l-shots').innerText = `STŘELY: ${hSh} - ${aSh}`;
+
+        if (minute >= 45) {
+            clearInterval(liveSim);
+            if (hS === aS) Math.random() > 0.5 ? hS++ : aS++;
+            db.lastResult = { hS, aS, hSh, aSh };
+            updateStats(h, a, hS, aS, hSh, aSh);
+            save();
+            finishMatch(h, a, hS, aS);
+        }
+    }, 400);
+}
+
+function finishMatch(h, a, hS, aS) {
+    updateStats(h, a, hS, aS, db.lastResult.hSh, db.lastResult.aSh);
+    if (db.playoffStage > 0) {
+        db.playoffWinners.push(hS > aS ? h : a);
+        simulateRemainingPairs();
+    } else {
+        simulateOtherSeasonMatches(h, a);
+    }
+    db.matchPlayed = true;
+    save();
+    showMatchEnd(a === db.userTeam ? h : a);
+}
+
+
+    function showMatchEnd(opp) {
+
+        document.getElementById('view').innerHTML = `
+
+            <div class="nhl-scoreboard">
+
+                <div class="score-row">
+
+                    <div><img src="${db.teams[db.userTeam].logo}" style="width:55px"><br>${db.teams[db.userTeam].abbr}</div>
+
+                    <div class="score-big">${db.lastResult.hS} - ${db.lastResult.aS}</div>
+
+                    <div><img src="${db.teams[opp].logo}" style="width:55px"><br>${db.teams[opp].abbr}</div>
+
+                </div>
+
+                <div class="shots-label">STŘELY: ${db.lastResult.hSh} - ${db.lastResult.aSh}</div>
+
+            </div>
+
+            <div id="field">
+
+                <div class="field-half">${renderRoster(db.userTeam)}</div>
+
+                <div class="field-half" style="border-left:1px dashed #333">${renderRoster(opp)}</div>
+
+            </div>
+
+            <button class="btn play-btn" style="margin-top:20px" onclick="advanceRound()">POKRAČOVAT</button>`;
+
+    }
+
+
+
+    function resolveMatch(h, a) {
+
+        const getPower = (tn) => db.teams[tn].roster.reduce((sum, p) => sum + p.ovr, 0) / 6;
+
+        let hSh = 18 + Math.floor(Math.random() * 15), aSh = 18 + Math.floor(Math.random() * 15);
+
+        const calcG = (sh, off, def) => {
+
+            let g = 0; let ch = (off / (def * 1.08)) * 0.088;
+
+            for(let i=0; i<sh; i++) if(Math.random() < ch) g++;
+
+            return g;
+
+        };
+
+        let hS = calcG(hSh, getPower(h), db.teams[a].roster[0].ovr);
+
+        let aS = calcG(aSh, getPower(a), db.teams[h].roster[0].ovr);
+
+        if (hS === aS) Math.random() > 0.5 ? hS++ : aS++;
+
+        db.lastResult = { hS, aS, hSh, aSh };
+
+       
+
+        const generateLog = (tN, count) => {
+
+            let l = "";
+
+            const players = db.teams[tN].roster.filter((_, i) => i > 0);
+
+            for(let i = 0; i < count; i++) {
+
+                let sIdx = Math.floor(Math.random() * players.length);
+
+                players[sIdx].g++;
+
+                let assts = [];
+
+                let others = players.filter((_, idx) => idx !== sIdx);
+
+                if(Math.random() < 0.9) {
+
+                    let a1 = Math.floor(Math.random() * others.length);
+
+                    others[a1].a++; assts.push(others[a1].n);
+
+                    if(Math.random() < 0.7) {
+
+                        others.splice(a1, 1);
+
+                        let a2 = Math.floor(Math.random() * others.length);
+
+                        others[a2].a++; assts.push(others[a2].n);
+
+                    }
+
+                }
+
+                l += `<div class="goal-entry"><img src="${db.teams[tN].logo}" class="mini-logo"> <b>${players[sIdx].n}</b><br><span class="goal-asst">Asist: ${assts.length > 0 ? assts.join(', ') : '---'}</span></div>`;
+
+            }
+
+            return l;
+
+        };
+
+       
+
+        db.playoffWinners = [];
+
+        updateStats(h, a, hS, aS, hSh, aSh); // Opraveno pořadí argumentů pro správný zápis statistik
+
+       
+
+        if (db.playoffStage > 0) {
+
+            db.playoffWinners.push(hS > aS ? h : a);
+
+            simulateRemainingPairs();
+
+        } else {
+
+            simulateOtherSeasonMatches(h, a);
+
+        }
+
+       
+
+        db.matchPlayed = true;
+
+        save();
+
+        render();
+
+        document.getElementById('side-goals').innerHTML = `<div class="goal-log"><h3>GÓLY</h3>` + generateLog(h, hS) + generateLog(a, aS) + `</div>`;
+
+    }
+
+
+
+    function simulateRoundOnly() {
+
+        db.playoffWinners = [];
+
+        simulateRemainingPairs();
+
+        db.matchPlayed = true;
+
+        save();
+
+        render();
+
+    }
+
+
+
+    function simulateRemainingPairs() {
+
+        db.playoffPairs.forEach(pair => {
+
+            if (!pair.includes(db.userTeam)) {
+
+                let win = quickSim(pair[0], pair[1]);
+
+                db.playoffWinners.push(win);
+
+            }
+
+        });
+
+    }
+
+
+
+    function simulateOtherSeasonMatches(uH, uA) {
+
+        let others = Object.keys(db.teams).filter(t => t !== uH && t !== uA).sort(() => Math.random() - 0.5);
+
+        while(others.length >= 2) quickSim(others.shift(), others.shift());
+
+    }
+
+
+
+    function quickSim(t1, t2) {
+
+        const getPower = (tn) => db.teams[tn].roster.reduce((sum, p) => sum + p.ovr, 0) / 6;
+
+        let s1 = 18 + Math.floor(Math.random() * 15), s2 = 18 + Math.floor(Math.random() * 15);
+
+        let g1 = Math.floor(s1 * (getPower(t1) / db.teams[t2].roster[0].ovr) * 0.09);
+
+        let g2 = Math.floor(s2 * (getPower(t2) / db.teams[t1].roster[0].ovr) * 0.09);
+
+        if(g1 === g2) Math.random() > 0.5 ? g1++ : g2++;
+
+       
+
+        updateStats(t1, t2, g1, g2, s1, s2);
+
+       
+
+        [ {n:t1, g:g1}, {n:t2, g:g2} ].forEach(side => {
+
+            const players = db.teams[side.n].roster.filter((_, i) => i > 0);
+
+            for(let i=0; i < side.g; i++) {
+
+                let sIdx = Math.floor(Math.random() * players.length);
+
+                players[sIdx].g++;
+
+                if(Math.random() < 0.8) {
+
+                    let a1 = (sIdx + 1) % players.length;
+
+                    players[a1].a++;
+
+                    if(Math.random() < 0.5) {
+
+                        let a2 = (sIdx + 2) % players.length;
+
+                        players[a2].a++;
+
+                    }
+
+                }
+
+            }
+
+        });
+
+        return g1 > g2 ? t1 : t2;
+
+    }
+
+
+
+    function updateStats(t1, t2, g1, g2, sh1, sh2) {
+
+        db.teams[t1].gf += g1; db.teams[t1].ga += g2; db.teams[t1].shotsAgainst += sh2;
+
+        db.teams[t2].gf += g2; db.teams[t2].ga += g1; db.teams[t2].shotsAgainst += sh1;
+
+        if(g1 > g2) { db.teams[t1].v++; db.teams[t1].pts += 3; db.teams[t2].p++; }
+
+        else { db.teams[t2].v++; db.teams[t2].pts += 3; db.teams[t1].p++; }
+
+    }
+
+
+
+  function showStandings() {
+    // 1. Určení soupeře pro vizitku (stejná logika jako v render)
+    let nextMatchHTML = "";
+    if (db.playoffStage === 0 && db.currentRound < 13) {
+        let tNames = Object.keys(db.teams);
+        let myIdx = tNames.indexOf(db.userTeam);
+        let oppIdx = (myIdx + db.currentRound + 1) % tNames.length;
+        if (tNames[oppIdx] === db.userTeam) { oppIdx = (oppIdx + 1) % tNames.length; }
+        
+        let opponent = tNames[oppIdx];
+        
+        nextMatchHTML = `
+            <div class="next-match-banner">
+                <div class="next-match-header">Příští zápas</div>
+                <div class="next-match-teams">
+                    <img src="${db.teams[db.userTeam].logo}" class="next-match-logo">
+                    <span class="next-match-vs">VS<h70></span>
+                    <img src="${db.teams[opponent].logo}" class="next-match-logo">
+                </div>
+                <div class="next-match-names">${db.userTeam}<h7>versus</h7> ${opponent}</div>
+            </div>`;
+    }
+
+    // 2. Vykreslení tabulky
+    let arr = Object.keys(db.teams).map(n => ({n, ...db.teams[n]})).sort((a,b) => b.pts - a.pts || (b.gf-b.ga)-(a.gf-a.ga));
+    let h = `<h2>Tabulka</h2>${nextMatchHTML}<table><tr><th>#</th><th>Tým</th><th>Z</th><th>V</th><th>P</th><th>Skóre</th><th>B</th></tr>`;
+    
+    arr.forEach((t, i) => {
+        let rowClass = (t.n == db.userTeam ? 'highlight ' : '') + (i === 5 ? 'po-border' : '');
+        h += `<tr class="${rowClass}"><td>${i+1}.</td><td><img src="${t.logo}" class="mini-logo"> ${t.n}</td><td>${t.v+t.p}</td><td>${t.v}</td><td>${t.p}</td><td>${t.gf}:${t.ga}</td><td>${t.pts}</td></tr>`;
+    });
+    
+    document.getElementById('view').innerHTML = h + "</table>";
+}
+
+    function showStats() {
+
+        let sk = [];
+
+        let gk = [];
+
+        Object.keys(db.teams).forEach(tN => {
+
+            db.teams[tN].roster.forEach((p, i) => {
+
+                const isUser = tN === db.userTeam;
+
+                if(i === 0) {
+
+                    let perc = db.teams[tN].shotsAgainst > 0 ? (1 - (db.teams[tN].ga / db.teams[tN].shotsAgainst)) * 100 : 0;
+
+                    gk.push({n:p.n, t:db.teams[tN].abbr, ga:db.teams[tN].ga, sh:db.teams[tN].shotsAgainst, p:perc, logo:db.teams[tN].logo, isUser});
+
+                } else {
+
+                    sk.push({n:p.n, t:db.teams[tN].abbr, g:p.g, a:p.a, b:p.g+p.a, logo:db.teams[tN].logo, isUser});
+
+                }
+
+            });
+
+        });
+
+        gk.sort((a,b) => b.p - a.p);
+
+        sk.sort((a,b) => b.b - a.b || b.g - a.g);
+
+        let h = `<h2>Kanadské bodování</h2><table><tr><th>Hráč</th><th>Tým</th><th>G</th><th>A</th><th>B</th></tr>`;
+
+        sk.slice(0,25).forEach(p => {
+
+            let rowClass = p.isUser ? 'highlight' : '';
+
+            h += `<tr class="${rowClass}"><td><img src="${p.logo}" class="mini-logo"> ${p.n}</td><td>${p.t}</td><td>${p.g}</td><td>${p.a}</td><td><b>${p.b}</b></td></tr>`;
+
+        });
+
+        h += `</table><br><h2>Statistiky Brankářů</h2><table><tr><th>Gólman</th><th>Tým</th><th>Zásahy/Střely</th><th>Úspěšnost</th></tr>`;
+
+        gk.forEach(p => {
+
+            let rowClass = p.isUser ? 'highlight' : '';
+
+            h += `<tr class="${rowClass}"><td><img src="${p.logo}" class="mini-logo"> ${p.n}</td><td>${p.t}</td><td>${p.sh-p.ga}/${p.sh}</td><td><b>${p.p.toFixed(1)} %</b></td></tr>`;
+
+        });
+
+        document.getElementById('view').innerHTML = h + "</table>";
+
+    }
+
+
+
+    function advanceRound() {
+
+        if (db.playoffStage === 0) {
+
+            db.currentRound++;
+
+        } else {
+
+            let winners = [...db.playoffWinners];
+
+            if (db.playoffStage === 1) {
+
+                db.playoffStage = 2;
+
+                db.playoffPairs = [[db.seasonWinners[0], winners[1]], [db.seasonWinners[1], winners[0]]];
+
+            }
+
+            else if (db.playoffStage === 2) {
+
+                db.playoffStage = 3;
+
+                db.playoffPairs = [[winners[0], winners[1]]];
+
+            }
+
+            else {
+
+                db.finaleWinner = winners[0];
+
+            }
+
+        }
+
+        db.matchPlayed = false;
+
+        db.playoffWinners = [];
+
+        document.getElementById('side-goals').innerHTML = "";
+
+        save();
+
+        render();
+
+    }
+
+
+
+    function showPlayoffBrackets() {
+
+        let h = `<h2>PLAY-OFF - ${db.playoffStage === 1 ? 'ČTVRTFINÁLE' : db.playoffStage === 2 ? 'SEMIFINÁLE' : 'FINÁLE'}</h2>`;
+
+        db.playoffPairs.forEach(pair => {
+
+            h += `<div class="team-card" style="width:96%; margin-bottom:10px; padding:15px; display:flex; align-items:center; justify-content:space-between;">
+
+                    <span><img src="${db.teams[pair[0]].logo}" class="mini-logo"> ${pair[0]}</span>
+
+                    <b style="color:#ff6600">VS</b>
+
+                    <span>${pair[1]} <img src="${db.teams[pair[1]].logo}" class="mini-logo"></span>
+
+                  </div>`;
+
+        });
+
+        if(db.playoffStage === 1) h += `<p style="opacity:0.5; font-size:0.8em">* ${db.seasonWinners.join(' a ')} čekají v semifinále.</p>`;
+
+        document.getElementById('view').innerHTML = h;
+
+    }
+
+   
+
+function renderRoster(t) {
+
+    const p = db.teams[t].roster;
+
+    const pDiv = (pl) => `
+
+        <div class="player-pos">
+
+            <img src="${formatFileName(pl.n)}" class="player-photo" onerror="this.src='hraci/default.jpg'">
+
+            ${pl.n} <span class="ovr">${pl.ovr}</span>
+
+        </div>`;
+
+
+
+    return `
+
+        <div style="border-color:#ff6600">${pDiv(p[0])}</div>
+
+        <div style="display:flex;gap:10px;margin:15px 0">${pDiv(p[1])}${pDiv(p[2])}</div>
+
+        <div style="display:flex;gap:5px">${pDiv(p[3])}${pDiv(p[4])}${pDiv(p[5])}</div>`;
+
+}
+
+
+
+    function showWinnerScreen() {
+
+        const team = db.teams[db.finaleWinner];
+
+        let allPlayers = [];
+
+        Object.keys(db.teams).forEach(tName => {
+
+            db.teams[tName].roster.forEach((p, i) => {
+
+                if (i > 0) { allPlayers.push({ n: p.n, g: p.g, a: p.a, b: p.g + p.a, t: tName }); }
+
+            });
+
+        });
+
+        const topScorer = [...allPlayers].sort((a, b) => b.g - a.g || b.b - a.b)[0];
+
+        const topProducer = [...allPlayers].sort((a, b) => b.b - a.b || b.g - a.g)[0];
+
+        document.getElementById('app').innerHTML = `
+
+            <div style="text-align:center; padding:60px;">
+
+                <h1 style="font-size: 3em; color: #FFDF00; margin-bottom: 10px;">MISTŘI!</h1>
+
+                <img src="${team.logo}" style="width:200px; margin-bottom: 20px;">
+
+                <h2 style="font-size: 2.5em; margin-top: 0;">${db.finaleWinner}</h2>
+
+                <div style="display: flex; justify-content: center; gap: 50px; margin: 40px 0; background: rgba(255,255,255,0.05); padding: 30px; border-radius: 20px; border: 1px solid #333;">
+
+                    <div>
+
+                        <h3 style="color: #ff6600;">Nejlepší střelec</h3>
+
+                        <p style="font-size: 1.2em; margin-bottom: 5px;"><b>${topScorer.n}</b></p>
+
+                        <p style="color: #888; margin-top: 0;">${topScorer.t} — ${topScorer.g} gólů</p>
+
+                    </div>
+
+                    <div style="width: 1px; background: #333;"></div>
+
+                    <div>
+
+                        <h3 style="color: #ff6600;">Nejproduktivnější hráč</h3>
+
+                        <p style="font-size: 1.2em; margin-bottom: 5px;"><b>${topProducer.n}</b></p>
+
+                        <p style="color: #888; margin-top: 0;">${topProducer.t} — ${topProducer.b} bodů (${topProducer.g}+${topProducer.a})</p>
+
+                    </div>
+
+                </div>
+
+                <button class="btn" style="width:250px; margin:auto; background: #4CAF50;" onclick="resetSeason()">NOVÁ SEZÓNA</button>
+
+            </div>`;
+
+    }
+
+
+
+    function changeSelected(dir) { const n = Object.keys(db.teams); selectedIdx = (selectedIdx + dir + n.length) % n.length; render(); }
+
+    function confirmTeam(t) { db.userTeam = t; save(); render(); }
+
+    function save() { localStorage.setItem('hokejbal_v22', JSON.stringify(db)); }
+
+    function resetSeason() { localStorage.removeItem('hokejbal_v22'); location.reload(); }
+
+    render();
+
+</script>
+
+</body>
+
+</html>
