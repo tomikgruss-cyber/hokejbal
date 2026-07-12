@@ -133,6 +133,66 @@
             box-shadow: 0 0 10px rgba(37, 99, 235, 0.6);
             border: 1.5px solid #93c5fd !important;
         }
+        /* Styl pro filtry statistik */
+        .stats-filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .filter-btn {
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid #cbd5e1;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .filter-btn.active {
+            background: #ff6600;
+            color: white;
+            border-color: #ff6600;
+        }
+        /* Styl pro oranžovou kuličku vstřeleného gólu */
+        .match-goal-ball {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: #ff6600;
+            border-radius: 50%;
+            margin-left: 3px;
+            vertical-align: middle;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        /* Styl pro sekci střídačky pod hřištěm */
+        .bench-container {
+            width: 100%;
+            max-width: 980px;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 15px;
+            margin-top: 15px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+            box-sizing: border-box;
+        }
+        .bench-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .bench-players {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
     </style>
 </head>
 <body>
@@ -156,28 +216,29 @@ function formatFileName(name) {
 }
 
     const TEAMS_DATA = {
-        "SK Jihlava": { abbr: "JIH", logo: "loga/jihlava.png",titles: 1, players: [{n:"L. Čára", ovr:84, p:"G"}, {n:"M. Hora", ovr:75, p:"D"}, {n:"Š. Habermann", ovr:86, p:"D"}, {n:"P. Král", ovr:77, p:"F"}, {n:"L. Moravský", ovr:75, p:"F"}, {n:"J. Ileček", ovr:82, p:"F"}] },
-        "HBC Hostivař": { abbr: "HOS", logo: "loga/hostivar.png",titles: 2, players: [{n:"V. Mokry", ovr:92, p:"G"}, {n:"J. Markytán", ovr:90, p:"D"}, {n:"J. Hrabár", ovr:89, p:"D"}, {n:"S. Kucharčík", ovr:94, p:"F"}, {n:"J. Čejka", ovr:98, p:"F"}, {n:"T. Šmerha", ovr:90, p:"F"}] },
-        "Eagles Brno": { abbr: "BRN", logo: "loga/brno.png", players: [{n:"P. Staníček", ovr:68, p:"G"}, {n:"M. Zíma", ovr:77, p:"D"}, {n:"M. Vavrů", ovr:76, p:"D"}, {n:"D. Gruss", ovr:86, p:"F"}, {n:"S. Volf", ovr:84, p:"F"}, {n:"L. Volf", ovr:87, p:"F"}] },
-        "Ježci Heřmanův Městec": { abbr: "JEZ", logo: "loga/jezci.webp", players: [{n:"T. Gruss", ovr:90, p:"G"}, {n:"F. Kovář", ovr:89, p:"D"}, {n:"T. Roztočil", ovr:87, p:"D"}, {n:"V. Kachlík", ovr:90, p:"F"}, {n:"J. Sedlák", ovr:89, p:"F"}, {n:"M. Řivnáč", ovr:88, p:"F"}] },
-        "HBC Kladno": { abbr: "KLA", logo: "loga/kladno.png",titles: 6, players: [{n:"M. Jakoubek", ovr:88, p:"G"}, {n:"M. Drechsler", ovr:90, p:"D"}, {n:"R. Soukup", ovr:88, p:"D"}, {n:"M. Schnaubelt", ovr:92, p:"F"}, {n:"Mi. Schnaubelt", ovr:90, p:"F"}, {n:"M. Daníček", ovr:93, p:"F"}] },
-        "HBC Pardubice": { abbr: "PCE", logo: "loga/pardubice.png",titles: 1, players: [{n:"P. Foršt", ovr:89, p:"G"}, {n:"F. Kamaryt", ovr:89, p:"D"}, {n:"J. Strouhal", ovr:87, p:"D"}, {n:"N. Langr", ovr:91, p:"F"}, {n:"J. Bílý", ovr:93, p:"F"}, {n:"T. Kupka", ovr:89, p:"F"}] },
-        "HC Kert Park Praha": { abbr: "KER", logo: "loga/kert.png",titles: 7, players: [{n:"L. Gerlich", ovr:91, p:"G"}, {n:"J. Blaško", ovr:89, p:"D"}, {n:"R. Peschout", ovr:88, p:"D"}, {n:"T. Wróbel", ovr:90, p:"F"}, {n:"V. Jágr", ovr:91, p:"F"}, {n:"D. Zvonek", ovr:89, p:"F"}] },
-        "HBC Hradec Králové 1988": { abbr: "HRA", logo: "loga/hradec.png", players: [{n:"O. Charvát", ovr:90, p:"G"}, {n:"V. Musílek", ovr:90, p:"D"}, {n:"Š. Palán", ovr:91, p:"D"}, {n:"Š. Bohatý", ovr:86, p:"F"}, {n:"P. Bakus", ovr:89, p:"F"}, {n:"J. Pilař", ovr:90, p:"F"}] },
-        "SK Hokejbal Letohrad": { abbr: "LET", logo: "loga/letohrad.webp", players: [{n:"M. Novák", ovr:89, p:"G"}, {n:"M. Nazad", ovr:88, p:"D"}, {n:"J. Bečka", ovr:87, p:"D"}, {n:"T. Lux", ovr:90, p:"F"}, {n:"M. Macháček", ovr:91, p:"F"}, {n:"V. Rozlílek", ovr:91, p:"F"}] },
-        "HBC Svítkov Stars Pardubice": { abbr: "SVI", logo: "loga/svitkov.png", players: [{n:"L. Novotný", ovr:91, p:"G"}, {n:"M. Korbel", ovr:87, p:"D"}, {n:"M. Kubíček", ovr:92, p:"D"}, {n:"M. Bláha", ovr:91, p:"F"}, {n:"J. Stromko", ovr:89, p:"F"}, {n:"T. Kantor", ovr:88, p:"F"}] },
-        "HBC Plzeň": { abbr: "PLZ", logo: "loga/plzen.png",titles: 2, players: [{n:"K. Kolář", ovr:88, p:"G"}, {n:"T. Chramosta", ovr:88, p:"D"}, {n:"D. Král", ovr:87, p:"D"}, {n:"M. Švarc", ovr:91, p:"F"}, {n:"V. Lokajíček", ovr:90, p:"F"}, {n:"D. Němčák", ovr:87, p:"F"}] },
-        "TJ Snack Dobřany": { abbr: "DOB", logo: "loga/dobrany.png",6: 0, players: [{n:"T. Humlíček", ovr:90, p:"G"}, {n:"T. Duchek", ovr:87, p:"D"}, {n:"J. Kolařík", ovr:88, p:"D"}, {n:"M. Pavlíček", ovr:92, p:"F"}, {n:"V. Šlehofer", ovr:91, p:"F"}, {n:"J. Štěpánek", ovr:89, p:"F"}] },
-        "Nedělní Odreagování": { abbr: "NOD", logo: "loga/odreagovani.png", players: [{n:"L. Doležal", ovr:65, p:"G"}, {n:"E. Krainer", ovr:68, p:"D"}, {n:"V. Hons", ovr:68, p:"D"}, {n:"M. Molnár", ovr:54, p:"F"}, {n:"Š. Molnár", ovr:61, p:"F"}, {n:"I. Molnár", ovr:48, p:"F"}] },
-        "JVSK Slza Okříšky": { abbr: "OKR", logo: "loga/okrisky.png", players: [{n:"R. Musil", ovr:70, p:"G"}, {n:"M. Pysk", ovr:82, p:"D"}, {n:"J. Zeman", ovr:85, p:"D"}, {n:"M. Mejzlík", ovr:89, p:"F"}, {n:"D. Fiala", ovr:85, p:"F"}, {n:"M. Dočekal", ovr:85, p:"F"}] }
+        "SK Jihlava": { abbr: "JIH", logo: "loga/jihlava.png",titles: 1, players: [{n:"L. Čára", ovr:84, p:"G"}, {n:"M. Hora", ovr:75, p:"D"}, {n:"Š. Habermann", ovr:86, p:"D"}, {n:"P. Král", ovr:77, p:"F"}, {n:"L. Moravský", ovr:75, p:"F"}, {n:"J. Ileček", ovr:82, p:"F"}, {n:"D. Ohainka", ovr:76, p:"F"}, {n:"J. Růžička", ovr:86, p:"F"}, {n:"J. Harasim", ovr:79, p:"D"}] },
+        "HBC Hostivař": { abbr: "HOS", logo: "loga/hostivar.png",titles: 2, players: [{n:"V. Mokrý", ovr:92, p:"G"}, {n:"J. Markytán", ovr:90, p:"D"}, {n:"J. Hrabár", ovr:89, p:"D"}, {n:"S. Kucharčík", ovr:94, p:"F"}, {n:"J. Čejka", ovr:98, p:"F"}, {n:"T. Šmerha", ovr:90, p:"F"}, {n:"F. Hradil", ovr:87, p:"F"}, {n:"M. Mikšovský", ovr:86, p:"F"}, {n:"D. Vaniš", ovr:89, p:"D"}] },
+        "Eagles Brno": { abbr: "BRN", logo: "loga/brno.png", players: [{n:"P. Staníček", ovr:68, p:"G"}, {n:"M. Zíma", ovr:77, p:"D"}, {n:"M. Vavrů", ovr:76, p:"D"}, {n:"D. Gruss", ovr:86, p:"F"}, {n:"S. Volf", ovr:84, p:"F"}, {n:"L. Volf", ovr:87, p:"F"}, {n:"M. Gjumija", ovr:99, p:"F"}, {n:"D. Švestka", ovr:75, p:"F"}, {n:"M. Dlabaja", ovr:73, p:"D"}] },
+        "Ježci Heřmanův Městec": { abbr: "JEZ", logo: "loga/jezci.webp", players: [{n:"T. Gruss", ovr:90, p:"G"}, {n:"F. Kovář", ovr:89, p:"D"}, {n:"T. Roztočil", ovr:87, p:"D"}, {n:"V. Kachlík", ovr:90, p:"F"}, {n:"J. Sedlák", ovr:89, p:"F"}, {n:"M. Řivnáč", ovr:88, p:"F"}, {n:"M. Starý", ovr:86, p:"F"}, {n:"J. Peřina", ovr:87, p:"F"}, {n:"M. Mareček", ovr:89, p:"D"}] },
+        "HBC Kladno": { abbr: "KLA", logo: "loga/kladno.png",titles: 6, players: [{n:"M. Jakoubek", ovr:88, p:"G"}, {n:"M. Drechsler", ovr:90, p:"D"}, {n:"R. Soukup", ovr:88, p:"D"}, {n:"Mi. Schnaubelt", ovr:92, p:"F"}, {n:"M. Schnaubelt", ovr:90, p:"F"}, {n:"M. Daníček", ovr:93, p:"F"}, {n:"R. Kohout", ovr:90, p:"F"}, {n:"A. Kubík", ovr:92, p:"F"}, {n:"F. Barták", ovr:87, p:"D"}] },
+        "HBC Pardubice": { abbr: "PCE", logo: "loga/pardubice.png",titles: 1, players: [{n:"P. Forst", ovr:89, p:"G"}, {n:"F. Kamaryt", ovr:89, p:"D"}, {n:"J. Strouhal", ovr:87, p:"D"}, {n:"N. Langr", ovr:91, p:"F"}, {n:"J. Bílý", ovr:93, p:"F"}, {n:"T. Kupka", ovr:89, p:"F"}, {n:"D. Lang", ovr:86, p:"F"}, {n:"J. Česák", ovr:87, p:"F"}, {n:"J. Gelsler", ovr:86, p:"D"}] },
+        "HC Kert Park Praha": { abbr: "KER", logo: "loga/kert.png",titles: 7, players: [{n:"L. Gerlich", ovr:91, p:"G"}, {n:"J. Blaško", ovr:89, p:"D"}, {n:"R. Peschout", ovr:88, p:"D"}, {n:"T. Wróbel", ovr:90, p:"F"}, {n:"V. Jágr", ovr:91, p:"F"}, {n:"D. Zvonek", ovr:89, p:"F"}, {n:"J. Pavlík", ovr:90, p:"F"}, {n:"M. Kruček", ovr:88, p:"F"}, {n:"J. Laurinc", ovr:88, p:"D"}] },
+        "HBC Hradec Králové 1988": { abbr: "HRA", logo: "loga/hradec.png", players: [{n:"O. Charvát", ovr:90, p:"G"}, {n:"V. Musílek", ovr:90, p:"D"}, {n:"Š. Palán", ovr:91, p:"D"}, {n:"Š. Bohatý", ovr:86, p:"F"}, {n:"P. Bakus", ovr:89, p:"F"}, {n:"J. Pilař", ovr:90, p:"F"}, {n:"M. Jankůj", ovr:87, p:"F"}, {n:"L. Černý", ovr:88, p:"F"}, {n:"V. Fanderlík", ovr:90, p:"D"}] },
+        "SK Hokejbal Letohrad": { abbr: "LET", logo: "loga/letohrad.webp", players: [{n:"M. Novák", ovr:89, p:"G"}, {n:"M. Nazad", ovr:88, p:"D"}, {n:"J. Bečka", ovr:87, p:"D"}, {n:"T. Lux", ovr:90, p:"F"}, {n:"M. Macháček", ovr:91, p:"F"}, {n:"V. Rozlílek", ovr:91, p:"F"}, {n:"D. Halbrštát", ovr:91, p:"F"}, {n:"L. Lhota", ovr:92, p:"F"}, {n:"R. Dostál", ovr:87, p:"D"}] },
+        "HBC Svítkov Stars Pardubice": { abbr: "SVI", logo: "loga/svitkov.png", players: [{n:"L. Novotný", ovr:91, p:"G"}, {n:"M. Korbel", ovr:87, p:"D"}, {n:"M. Kubíček", ovr:92, p:"D"}, {n:"M. Bláha", ovr:91, p:"F"}, {n:"J. Stromko", ovr:89, p:"F"}, {n:"T. Kantor", ovr:88, p:"F"}, {n:"R. Vizváry", ovr:89, p:"F"}, {n:"L. Kozel", ovr:86, p:"F"}, {n:"T. Hudec", ovr:88, p:"D"}] },
+        "HBC Plzeň": { abbr: "PLZ", logo: "loga/plzen.png",titles: 2, players: [{n:"K. Kolář", ovr:88, p:"G"}, {n:"T. Chramosta", ovr:88, p:"D"}, {n:"D. Král", ovr:87, p:"D"}, {n:"M. Švarc", ovr:91, p:"F"}, {n:"V. Lokajíček", ovr:90, p:"F"}, {n:"D. Němčák", ovr:87, p:"F"}, {n:"A. Hájek", ovr:88, p:"F"}, {n:"J. Procházka", ovr:87, p:"F"}, {n:"A. Šilhán", ovr:86, p:"D"}] },
+        "TJ Snack Dobřany": { abbr: "DOB", logo: "loga/dobrany.png",6: 0, players: [{n:"T. Humlíček", ovr:90, p:"G"}, {n:"T. Duchek", ovr:87, p:"D"}, {n:"J. Kolařík", ovr:88, p:"D"}, {n:"M. Pavlíček", ovr:92, p:"F"}, {n:"V. Šlehofer", ovr:91, p:"F"}, {n:"J. Štěpánek", ovr:89, p:"F"}, {n:"B. Launa", ovr:88, p:"F"}, {n:"D. Kovářík", ovr:87, p:"F"}, {n:"P. Sloup", ovr:86, p:"D"}] },
+        "Nedělní Odreagování": { abbr: "NOD", logo: "loga/odreagovani.png", players: [{n:"L. Doležal", ovr:65, p:"G"}, {n:"E. Krainer", ovr:68, p:"D"}, {n:"V. Hons", ovr:68, p:"D"}, {n:"M. Molnár", ovr:54, p:"F"}, {n:"Š. Molnár", ovr:61, p:"F"}, {n:"I. Molnár", ovr:48, p:"F"}, {n:"R. Kolda", ovr:44, p:"F"}, {n:"V. Bouchner", ovr:73, p:"F"}, {n:"J. Matoušek", ovr:45, p:"D"}] },
+        "JVSK Slza Okříšky": { abbr: "OKR", logo: "loga/okrisky.png", players: [{n:"R. Musil", ovr:70, p:"G"}, {n:"M. Pysk", ovr:82, p:"D"}, {n:"J. Zeman", ovr:85, p:"D"}, {n:"M. Mejzlík", ovr:89, p:"F"}, {n:"D. Fiala", ovr:85, p:"F"}, {n:"M. Dočekal", ovr:85, p:"F"}, {n:"M. Štos", ovr:78, p:"F"}, {n:"L. Přidal", ovr:78, p:"F"}, {n:"T. Sýkora", ovr:83, p:"D"}] }
     };
 
     let db = JSON.parse(localStorage.getItem('hokejbal_v22')) || {
         userTeam: null, currentRound: 0, matchPlayed: false,
         playoffStage: 0, playoffPairs: [], playoffWinners: [],
         finaleWinner: null, teams: {}, seasonWinners: [],
-        lastResult: { hS: 0, aS: 0, hSh: 0, aSh: 0, mvpName: "", mvpRating: "", endRatings: {} },
-        userTactics: 50, userShootingStyle: "normal"
+        lastResult: { hS: 0, aS: 0, hSh: 0, aSh: 0, mvpName: "", mvpRating: "", endRatings: {}, matchGoals: {} },
+        userTactics: 50, userShootingStyle: "normal",
+        currentStatsFilter: "all"
     };
 
     if (Object.keys(db.teams).length === 0) {
@@ -185,7 +246,7 @@ function formatFileName(name) {
             db.teams[t] = {
                 ...TEAMS_DATA[t], v:0, p:0, pts:0, gf:0, ga:0, shotsAgainst:0,
                 ppAtt: 0, ppG: 0, pkAtt: 0, pkGa: 0,
-                roster: TEAMS_DATA[t].players.map(p => ({ ...p, g:0, a:0, mvp:0 }))
+                roster: TEAMS_DATA[t].players.map(p => ({ ...p, g:0, a:0, mvp:0, so:0, gp:0 }))
             };
         });
     }
@@ -195,13 +256,22 @@ function formatFileName(name) {
         if (db.teams[t].ppG === undefined) db.teams[t].ppG = 0;
         if (db.teams[t].pkAtt === undefined) db.teams[t].pkAtt = 0;
         if (db.teams[t].pkGa === undefined) db.teams[t].pkGa = 0;
+        
+        if (!db.teams[t].roster || db.teams[t].roster.length < 9) {
+            db.teams[t].roster = TEAMS_DATA[t].players.map(p => ({ ...p, g:0, a:0, mvp:0, so:0, gp:0 }));
+        }
+
         db.teams[t].roster.forEach(p => {
             if (p.mvp === undefined) p.mvp = 0;
+            if (p.so === undefined) p.so = 0;
+            if (p.gp === undefined) p.gp = 0;
         });
     });
     if (db.userTactics === undefined) db.userTactics = 50;
     if (db.userShootingStyle === undefined) db.userShootingStyle = "normal";
     if (db.lastResult.endRatings === undefined) db.lastResult.endRatings = {};
+    if (db.lastResult.matchGoals === undefined) db.lastResult.matchGoals = {};
+    if (db.currentStatsFilter === undefined) db.currentStatsFilter = "all";
 
     let selectedIdx = 0;
     let selectedPlayerIdx = null; 
@@ -209,6 +279,71 @@ function formatFileName(name) {
 
     let liveSimInterval = null;
     let liveSimData = null;
+
+// Automatická optimalizace sestavy počítače (AI) s náhodným faktorem formy
+function optimizeAILineup(teamName) {
+    if (teamName === db.userTeam) return; // Uživatelský tým neměnit!
+    
+    let roster = db.teams[teamName].roster;
+    
+    // Ke každému hráči dočasně připočteme náhodnou formu od -5 do +5 OVR pro tento zápas
+    let rosterWithForm = roster.map(p => ({
+        player: p,
+        tempOvr: p.ovr + (Math.floor(Math.random() * 11) - 5)
+    }));
+    
+    // 1. Najít nejlepšího brankáře (G) podle dočasné formy
+    let bestGoalieIdx = rosterWithForm.findIndex(item => item.player.p === "G");
+    rosterWithForm.forEach((item, idx) => {
+        if (item.player.p === "G" && item.tempOvr > rosterWithForm[bestGoalieIdx].tempOvr) {
+            bestGoalieIdx = idx;
+        }
+    });
+    if (bestGoalieIdx !== -1 && bestGoalieIdx !== 0) {
+        let tmp = rosterWithForm[0];
+        rosterWithForm[0] = rosterWithForm[bestGoalieIdx];
+        rosterWithForm[bestGoalieIdx] = tmp;
+    }
+    
+    // Zbytek hráčů (skateři)
+    let skaters = rosterWithForm.slice(1);
+    
+    // Vybereme dva nejlepší obránce (D) pro sloty 1 a 2 podle aktuální formy
+    for (let slot = 1; slot <= 2; slot++) {
+        let bestDefIdx = skaters.findIndex(item => item.player.p === "D");
+        skaters.forEach((item, idx) => {
+            if (item.player.p === "D" && (bestDefIdx === -1 || item.tempOvr > skaters[bestDefIdx].tempOvr)) {
+                bestDefIdx = idx;
+            }
+        });
+        if (bestDefIdx === -1) {
+            bestDefIdx = 0;
+        }
+        rosterWithForm[slot] = skaters.splice(bestDefIdx, 1)[0];
+    }
+    
+    // Vybereme tři nejlepší útočníky (F) pro sloty 3, 4 a 5 podle aktuální formy
+    for (let slot = 3; slot <= 5; slot++) {
+        let bestOffIdx = skaters.findIndex(item => item.player.p === "F");
+        skaters.forEach((item, idx) => {
+            if (item.player.p === "F" && (bestOffIdx === -1 || item.tempOvr > skaters[bestOffIdx].tempOvr)) {
+                bestOffIdx = idx;
+            }
+        });
+        if (bestOffIdx === -1) {
+            bestOffIdx = 0;
+        }
+        rosterWithForm[slot] = skaters.splice(bestOffIdx, 1)[0];
+    }
+    
+    // Zbytek hráčů hodíme na střídačku (indexy 6, 7, 8)
+    for (let slot = 6; slot <= 8; slot++) {
+        rosterWithForm[slot] = skaters.shift();
+    }
+
+    // Přepíšeme reálnou soupisku týmu podle nového náhodně-taktického pořadí
+    db.teams[teamName].roster = rosterWithForm.map(item => item.player);
+}
 
 function render() {
 if (!db.userTeam) {
@@ -364,6 +499,11 @@ function updateFieldDisplay() {
             <div class="field-half">${renderRoster(db.userTeam)}</div>
             <div class="field-half" style="border-left:1px dashed #333">${renderRoster(window.currentMatchOpponent)}</div>
         `;
+        
+        const benchDiv = document.getElementById('user-bench-players');
+        if (benchDiv) {
+            benchDiv.innerHTML = renderBenchOnly(db.userTeam);
+        }
     }
 }
 
@@ -429,7 +569,10 @@ function startMatch(opp) {
     window.currentMatchOpponent = opp;
     selectedPlayerIdx = null; 
     db.lastResult.endRatings = {}; 
+    db.lastResult.matchGoals = {};
     
+    optimizeAILineup(opp);
+
     let tacticsTxt = "Vyvážená (50)";
     if (db.userTactics < 50) tacticsTxt = `Útok (${100 - db.userTactics * 2}% Ofenzíva)`;
     if (db.userTactics > 50) tacticsTxt = `Obrana (${(db.userTactics - 50) * 2}% Defenzíva)`;
@@ -468,6 +611,13 @@ function startMatch(opp) {
             <div class="field-half">${renderRoster(db.userTeam)}</div>
             <div class="field-half" style="border-left:1px dashed #333">${renderRoster(opp)}</div>
         </div>
+
+        <div class="bench-container">
+            <div class="bench-title">Střídačka (Kliknutím prohodíš hráče do sestavy)</div>
+            <div class="bench-players" id="user-bench-players">
+                ${renderBenchOnly(db.userTeam)}
+            </div>
+        </div>
         
         <div id="button-container" style="display: flex; gap: 15px; margin-top: 30px; justify-content: center;">
             <button class="btn play-btn" id="sim-btn" onclick="resolveMatch('${db.userTeam}', '${opp}')">RYCHLÁ SIMULACE</button>
@@ -495,6 +645,9 @@ function updateLiveBadgeUI(playerName, rating) {
 function startLiveMatch(h, a) {
     document.getElementById('button-container').innerHTML = '<p>Zápas probíhá...</p>';
     
+    optimizeAILineup(h);
+    optimizeAILineup(a);
+
     const getDynamicTacticalPowers = (tn) => {
         let offSum = 0; let defSum = 0;
         defSum += db.teams[tn].roster[0].ovr;
@@ -529,7 +682,8 @@ function startLiveMatch(h, a) {
             ppTimeH: 0, ppTimeA: 0,
             totalShotsH: Math.round(baseShotsH * shotsModifierH),
             totalShotsA: baseShotsA,
-            ratings: {}
+            ratings: {},
+            matchGoals: {}
         };
 
         [h, a].forEach(teamName => {
@@ -594,10 +748,13 @@ function startLiveMatch(h, a) {
         let currentChanceA = liveSimData.ppTimeA > 0 ? chanceA * 1.8 : chanceA;
 
         const processGoal = (team, isPPGoal) => {
-            let players = db.teams[team].roster.filter((_, i) => i > 0);
+            let players = db.teams[team].roster.filter((_, i) => i > 0 && i <= 5);
             let s = players[Math.floor(Math.random() * players.length)];
             s.g++;
             
+            if (!liveSimData.matchGoals[s.n]) liveSimData.matchGoals[s.n] = 0;
+            liveSimData.matchGoals[s.n]++;
+
             liveSimData.ratings[s.n] = Math.min(10.0, liveSimData.ratings[s.n] + 1.5);
             updateLiveBadgeUI(s.n, liveSimData.ratings[s.n]);
 
@@ -629,6 +786,9 @@ function startLiveMatch(h, a) {
             let log = document.querySelector('.goal-log');
             let ppTag = isPPGoal ? ' <span style="color:#eab308; font-size:0.8em; font-weight:bold;">[PP]</span>' : '';
             if (log) log.innerHTML += `<div class="goal-entry"><img src="${db.teams[team].logo}" class="mini-logo"> [${liveSimData.minute}. min] <b>${s.n}</b>${ppTag}<br><span class="goal-asst">Asist: ${assts.join(', ') || '---'}</span></div>`;
+            
+            db.lastResult.matchGoals = liveSimData.matchGoals;
+            updateFieldDisplay();
         };
 
         if (liveSimData.hSh < liveSimData.totalShotsH && Math.random() < 0.4) {
@@ -695,7 +855,8 @@ function startLiveMatch(h, a) {
             db.lastResult = { 
                 hS: liveSimData.hS, aS: liveSimData.aS, hSh: liveSimData.hSh, aSh: liveSimData.aSh,
                 mvpName: bestPlayerName, mvpRating: Math.min(10.0, bestRatingValue).toFixed(1),
-                endRatings: finalRatingsSaved
+                endRatings: finalRatingsSaved,
+                matchGoals: liveSimData.matchGoals
             };
             
             updateStats(h, a, liveSimData.hS, liveSimData.aS, liveSimData.hSh, liveSimData.aSh);
@@ -723,6 +884,9 @@ function resolveMatch(h, a) {
     const tacticsBox = document.querySelector('.tactics-container');
     if (tacticsBox) tacticsBox.remove();
     liveSimData = null;
+
+    optimizeAILineup(h);
+    optimizeAILineup(a);
 
     const getTacticalPowers = (tn) => {
         let offSum = 0; let defSum = 0;
@@ -776,6 +940,7 @@ function resolveMatch(h, a) {
     db.teams[a].ppG += ppG_A; db.teams[h].pkGa += ppG_A;
    
     let localRatings = {};
+    let tempGoals = {};
     
     const calcGoalieQuickRating = (ga, oppShots) => {
         let base = 6.6 + (Math.random() * 0.5);
@@ -795,10 +960,14 @@ function resolveMatch(h, a) {
 
     const generateLog = (tN, count, ppGCount) => {
         let l = "";
-        const players = db.teams[tN].roster.filter((_, i) => i > 0);
+        const players = db.teams[tN].roster.filter((_, i) => i > 0 && i <= 5);
         for(let i = 0; i < count; i++) {
             let sIdx = Math.floor(Math.random() * players.length);
             players[sIdx].g++;
+            
+            if (!tempGoals[players[sIdx].n]) tempGoals[players[sIdx].n] = 0;
+            tempGoals[players[sIdx].n]++;
+
             localRatings[players[sIdx].n] += 1.4;
 
             let assts = [];
@@ -850,7 +1019,8 @@ function resolveMatch(h, a) {
     db.lastResult = { 
         hS, aS, hSh, aSh, 
         mvpName: bestPlayerName, mvpRating: bestRatingValue.toFixed(1),
-        endRatings: finalRatingsSaved
+        endRatings: finalRatingsSaved,
+        matchGoals: tempGoals
     };
    
     updateStats(h, a, hS, aS, hSh, aSh);
@@ -904,6 +1074,12 @@ function showMatchEnd(opp) {
             <div class="field-half">${renderRoster(db.userTeam)}</div>
             <div class="field-half" style="border-left:1px dashed #333">${renderRoster(opp)}</div>
         </div>
+        <div class="bench-container">
+            <div class="bench-title">Střídačka (Zápas skončil)</div>
+            <div class="bench-players">
+                ${renderBenchOnly(db.userTeam)}
+            </div>
+        </div>
         <button class="btn play-btn" style="margin-top:20px" onclick="advanceRound()">POKRAČOVAT</button>`;
 }
 
@@ -917,6 +1093,8 @@ function showMatchEnd(opp) {
     function simulateRemainingPairs() {
         db.playoffPairs.forEach(pair => {
             if (!pair.includes && pair.t1 !== db.userTeam && pair.t2 !== db.userTeam && pair.w1 < 2 && pair.w2 < 2) {
+                optimizeAILineup(pair.t1);
+                optimizeAILineup(pair.t2);
                 let wTeam = quickSim(pair.t1, pair.t2);
                 if (wTeam === pair.t1) pair.w1++;
                 else pair.w2++;
@@ -926,13 +1104,22 @@ function showMatchEnd(opp) {
 
     function simulateOtherSeasonMatches(uH, uA) {
         let others = Object.keys(db.teams).filter(t => t !== uH && t !== uA).sort(() => Math.random() - 0.5);
-        while(others.length >= 2) quickSim(others.shift(), others.shift());
+        while(others.length >= 2) {
+            let t1 = others.shift();
+            let t2 = others.shift();
+            optimizeAILineup(t1);
+            optimizeAILineup(t2);
+            quickSim(t1, t2);
+        }
     }
 
     function quickSim(t1, t2) {
+        optimizeAILineup(t1);
+        optimizeAILineup(t2);
+
         const getPower = (tn) => {
             let sum = 0;
-            db.teams[tn].roster.forEach((p, idx) => { sum += getEffectiveOvr(p, idx); });
+            db.teams[tn].roster.forEach((p, idx) => { if(idx < 6) sum += getEffectiveOvr(p, idx); });
             return sum / 6;
         };
         let s1 = 18 + Math.floor(Math.random() * 15), s2 = 18 + Math.floor(Math.random() * 15);
@@ -957,7 +1144,7 @@ function showMatchEnd(opp) {
         });
 
         [ {n:t1, g:g1}, {n:t2, g:g2} ].forEach(side => {
-            const players = db.teams[side.n].roster.filter((_, i) => i > 0);
+            const players = db.teams[side.n].roster.filter((_, i) => i > 0 && i <= 5);
             for(let i=0; i < side.g; i++) {
                 let sIdx = Math.floor(Math.random() * players.length);
                 players[sIdx].g++;
@@ -991,6 +1178,12 @@ function showMatchEnd(opp) {
     function updateStats(t1, t2, g1, g2, sh1, sh2) {
         db.teams[t1].gf += g1; db.teams[t1].ga += g2; db.teams[t1].shotsAgainst += sh2;
         db.teams[t2].gf += g2; db.teams[t2].ga += g1; db.teams[t2].shotsAgainst += sh1;
+        
+        db.teams[t1].roster[0].gp++;
+        db.teams[t2].roster[0].gp++;
+        if (g2 === 0) db.teams[t1].roster[0].so++;
+        if (g1 === 0) db.teams[t2].roster[0].so++;
+
         if(g1 > g2) { db.teams[t1].v++; db.teams[t1].pts += 3; db.teams[t2].p++; }
         else { db.teams[t2].v++; db.teams[t2].pts += 3; db.teams[t1].p++; }
     }
@@ -1028,6 +1221,12 @@ function showStandings() {
     document.getElementById('view').innerHTML = h + "</table>";
 }
 
+    function setStatsFilter(filterValue) {
+        db.currentStatsFilter = filterValue;
+        save();
+        showStats();
+    }
+
     function showStats() {
         let sk = [];
         let gk = [];
@@ -1036,24 +1235,40 @@ function showStandings() {
                 const isUser = tN === db.userTeam;
                 if(i === 0) {
                     let perc = db.teams[tN].shotsAgainst > 0 ? (1 - (db.teams[tN].ga / db.teams[tN].shotsAgainst)) * 100 : 0;
-                    gk.push({n:p.n, t:db.teams[tN].abbr, ga:db.teams[tN].ga, sh:db.teams[tN].shotsAgainst, p:perc, logo:db.teams[tN].logo, isUser});
+                    let gaa = p.gp > 0 ? (db.teams[tN].ga / p.gp) : 0;
+                    gk.push({n:p.n, t:db.teams[tN].abbr, ga:db.teams[tN].ga, sh:db.teams[tN].shotsAgainst, p:perc, gaa:gaa, so:p.so, logo:db.teams[tN].logo, isUser});
                 } else {
-                    sk.push({n:p.n, t:db.teams[tN].abbr, g:p.g, a:p.a, b:p.g+p.a, logo:db.teams[tN].logo, isUser});
+                    sk.push({n:p.n, t:db.teams[tN].abbr, g:p.g, a:p.a, b:p.g+p.a, pos:p.p, logo:db.teams[tN].logo, isUser});
                 }
             });
         });
         gk.sort((a,b) => b.p - a.p);
-        sk.sort((a,b) => b.b - a.b || b.g - a.g);
         
-        let h = `<h2 style="text-align: center;">Kanadské bodování</h2><table><tr><th>Hráč</th><th>Tým</th><th>G</th><th>A</th><th>B</th></tr>`;
-        sk.slice(0,25).forEach(p => {
+        let filteredSk = sk;
+        if (db.currentStatsFilter === "F") {
+            filteredSk = sk.filter(p => p.pos === "F");
+        } else if (db.currentStatsFilter === "D") {
+            filteredSk = sk.filter(p => p.pos === "D");
+        }
+        filteredSk.sort((a,b) => b.b - a.b || b.g - a.g);
+        
+        let filterHtml = `
+            <div class="stats-filter-container">
+                <button class="filter-btn ${db.currentStatsFilter === 'all' ? 'active' : ''}" onclick="setStatsFilter('all')">Všichni</button>
+                <button class="filter-btn ${db.currentStatsFilter === 'F' ? 'active' : ''}" onclick="setStatsFilter('F')">Útočníci</button>
+                <button class="filter-btn ${db.currentStatsFilter === 'D' ? 'active' : ''}" onclick="setStatsFilter('D')">Obránci</button>
+            </div>
+        `;
+        
+        let h = `<h2 style="text-align: center;">Kanadské bodování</h2>${filterHtml}<table><tr><th>Hráč</th><th>Tým</th><th>G</th><th>A</th><th>B</th></tr>`;
+        filteredSk.slice(0,25).forEach(p => {
             let rowClass = p.isUser ? 'highlight' : '';
             h += `<tr class="${rowClass}"><td><img src="${p.logo}" class="mini-logo"> ${p.n}</td><td>${p.t}</td><td>${p.g}</td><td>${p.a}</td><td><b>${p.b}</b></td></tr>`;
         });
-        h += `</table><br><h2 style="text-align: center;">Statistiky Brankářů</h2><table><tr><th>Gólman</th><th>Tým</th><th>Zásahy/Střely</th><th>Úspěšnost</th></tr>`;
+        h += `</table><br><h2 style="text-align: center;">Statistiky Brankářů</h2><table><tr><th>Gólman</th><th>Tým</th><th>Zásahy/Střely</th><th>GAA</th><th>SO</th><th>Úspěšnost</th></tr>`;
         gk.forEach(p => {
             let rowClass = p.isUser ? 'highlight' : '';
-            h += `<tr class="${rowClass}"><td><img src="${p.logo}" class="mini-logo"> ${p.n}</td><td>${p.t}</td><td>${p.sh-p.ga}/${p.sh}</td><td><b>${p.p.toFixed(1)} %</b></td></tr>`;
+            h += `<tr class="${rowClass}"><td><img src="${p.logo}" class="mini-logo"> ${p.n}</td><td>${p.t}</td><td>${p.sh-p.ga}/${p.sh}</td><td>${p.gaa.toFixed(2)}</td><td>${p.so}</td><td><b>${p.p.toFixed(1)} %</b></td></tr>`;
         });
 
         let teamArr = Object.keys(db.teams).map(n => ({n, ...db.teams[n]})).sort((a,b) => b.pts - a.pts || (b.gf-b.ga)-(a.gf-a.ga));
@@ -1081,6 +1296,7 @@ function showStandings() {
         if (db.playoffStage === 0) {
             db.currentRound++;
             db.matchPlayed = false;
+            db.lastResult.matchGoals = {};
             save();
             render();
             return;
@@ -1090,6 +1306,7 @@ function showStandings() {
 
         if (!allSeriesFinished) {
             db.matchPlayed = false;
+            db.lastResult.matchGoals = {};
             document.getElementById('side-goals').innerHTML = "";
             save();
             render();
@@ -1114,6 +1331,7 @@ function showStandings() {
             }
             
             db.matchPlayed = false;
+            db.lastResult.matchGoals = {};
             document.getElementById('side-goals').innerHTML = "";
             save();
             render();
@@ -1133,19 +1351,16 @@ function showStandings() {
         if(db.playoffStage === 1) h += `<p style="opacity:0.5; font-size:0.8em; text-align: center;">* ${db.seasonWinners.join(' a ')} čekají v semifinále.</p>`;
         document.getElementById('view').innerHTML = h;
     }
-   
-function renderRoster(t) {
-    const p = db.teams[t].roster;
-    const isUser = (t === db.userTeam);
 
-    const pDiv = (pl, idx) => {
-        let effOvr = getEffectiveOvr(pl, idx);
-        let ovrStyleClass = ""; 
+function createPlayerCardHtml(pl, idx, isUser) {
+    let effOvr = getEffectiveOvr(pl, idx);
+    let ovrStyleClass = ""; 
 
-        if (isUser) {
-            let tDiff = (db.userTactics - 50) / 50; 
-            let originalOvr = effOvr;
+    if (isUser) {
+        let tDiff = (db.userTactics - 50) / 50; 
+        let originalOvr = effOvr;
 
+        if (idx < 6) {
             if (idx === 0 || idx === 1 || idx === 2) {
                 effOvr = Math.round(originalOvr * (1.0 + (tDiff * 0.20)));
             } else if (idx === 3 || idx === 4 || idx === 5) {
@@ -1155,58 +1370,79 @@ function renderRoster(t) {
             if (effOvr > originalOvr) ovrStyleClass = "ovr-up";
             else if (effOvr < originalOvr) ovrStyleClass = "ovr-down";
         }
-        
-        const nativePos = pl.p === "G" ? "BRANKÁŘ" : (pl.p === "D" ? "OBRÁNCE" : "ÚTOČNÍK");
-        
-        let currentSlot = "B";
-        if (idx === 1) currentSlot = "LO";
-        if (idx === 2) currentSlot = "PO";
-        if (idx === 3) currentSlot = "LK";
-        if (idx === 4) currentSlot = "C";
-        if (idx === 5) currentSlot = "PK";
-        
-        let selClass = (isUser && selectedPlayerIdx === idx) ? "selected-player" : "";
-        let clickAttr = (isUser && idx > 0) ? `onclick="selectPlayerToSwap(${idx})"` : "";
-        let cursorStyle = (isUser && idx > 0) ? "cursor: pointer;" : "";
+    }
+    
+    const nativePos = pl.p === "G" ? "BRANKÁŘ" : (pl.p === "D" ? "OBRÁNCE" : "ÚTOČNÍK");
+    
+    let currentSlot = "B";
+    if (idx === 1) currentSlot = "LO";
+    if (idx === 2) currentSlot = "PO";
+    if (idx === 3) currentSlot = "LK";
+    if (idx === 4) currentSlot = "C";
+    if (idx === 5) currentSlot = "PK";
+    if (idx >= 6) currentSlot = "STŘ";
+    
+    let selClass = (isUser && selectedPlayerIdx === idx) ? "selected-player" : "";
+    let clickAttr = (isUser && idx > 0) ? `onclick="selectPlayerToSwap(${idx})"` : "";
+    let cursorStyle = (isUser && idx > 0) ? "cursor: pointer;" : "";
 
-        let badgeId = "badge-" + pl.n.replace(/[\s.]/g, "");
-        
-        let savedRating = db.lastResult.endRatings[pl.n];
-        let initialBadgeText = savedRating ? savedRating : "6.0";
-        
-        let badgeColorClass = "";
-        if (db.lastResult.mvpName && db.lastResult.mvpName === pl.n) {
-            badgeColorClass = " rating-blue";
-        } else if (savedRating) {
-            let val = parseFloat(savedRating);
-            if (val >= 8.0) badgeColorClass = " rating-green";
-            else if (val >= 7.0) badgeColorClass = " rating-gold";
-            else if (val < 6.0) badgeColorClass = " rating-red";
-        }
+    let badgeId = "badge-" + pl.n.replace(/[\s.]/g, "");
+    
+    let savedRating = db.lastResult.endRatings[pl.n];
+    let initialBadgeText = savedRating ? savedRating : "6.0";
+    
+    let badgeColorClass = "";
+    if (db.lastResult.mvpName && db.lastResult.mvpName === pl.n) {
+        badgeColorClass = " rating-blue";
+    } else if (savedRating) {
+        let val = parseFloat(savedRating);
+        if (val >= 8.0) badgeColorClass = " rating-green";
+        else if (val >= 7.0) badgeColorClass = " rating-gold";
+        else if (val < 6.0) badgeColorClass = " rating-red";
+    }
 
-        let badgeStyleMarkup = `<span class="live-rating-badge${badgeColorClass}" id="${badgeId}">${initialBadgeText}</span>`;
+    let badgeStyleMarkup = `<span class="live-rating-badge${badgeColorClass}" id="${badgeId}">${initialBadgeText}</span>`;
 
-        return `
-            <div class="player-pos ${selClass}" ${clickAttr} style="${cursorStyle}">
-                <div class="photo-wrapper">
-                    <img src="${formatFileName(pl.n)}" class="player-photo" onerror="this.src='hraci/default.jpg'">
-                    ${badgeStyleMarkup}
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 2px;">
-                    <span>${pl.n}</span>
-                    <span style="font-size: 11px; color: #64748b; font-weight: 600;">${nativePos} (${currentSlot})</span>
-                </div>
-                <span class="ovr ${ovrStyleClass}">${effOvr}</span>
-            </div>`;
-    };
+    let goalBalls = "";
+    let currentMatchGoals = db.lastResult.matchGoals[pl.n] || 0;
+    for (let gIdx = 0; gIdx < currentMatchGoals; gIdx++) {
+        goalBalls += `<span class="match-goal-ball"></span>`;
+    }
 
     return `
-        <div style="border-color:#ff6600">${pDiv(p[0], 0)}</div>
-        <div style="display:flex;gap:10px;margin:15px 0">${pDiv(p[1], 1)}${pDiv(p[2], 2)}</div>
-        <div style="display:flex;gap:5px">${pDiv(p[3], 3)}${pDiv(p[4], 4)}${pDiv(p[5], 5)}</div>`;
+        <div class="player-pos ${selClass}" ${clickAttr} style="${cursorStyle}">
+            <div class="photo-wrapper">
+                <img src="${formatFileName(pl.n)}" class="player-photo" onerror="this.src='hraci/default.jpg'">
+                ${badgeStyleMarkup}
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 2px;">
+                <span>${pl.n}${goalBalls}</span>
+                <span style="font-size: 11px; color: #64748b; font-weight: 600;">${nativePos} (${currentSlot})</span>
+            </div>
+            <span class="ovr ${ovrStyleClass}">${effOvr}</span>
+        </div>`;
+}
+   
+function renderRoster(t) {
+    const p = db.teams[t].roster;
+    const isUser = (t === db.userTeam);
+
+    return `
+        <div style="border-color:#ff6600">${createPlayerCardHtml(p[0], 0, isUser)}</div>
+        <div style="display:flex;gap:10px;margin:15px 0">${createPlayerCardHtml(p[1], 1, isUser)}${createPlayerCardHtml(p[2], 2, isUser)}</div>
+        <div style="display:flex;gap:5px">${createPlayerCardHtml(p[3], 3, isUser)}${createPlayerCardHtml(p[4], 4, isUser)}${createPlayerCardHtml(p[5], 5, isUser)}</div>`;
 }
 
-    function showWinnerScreen() {
+function renderBenchOnly(t) {
+    const p = db.teams[t].roster;
+    const isUser = (t === db.userTeam);
+    
+    return `${createPlayerCardHtml(p[6], 6, isUser)}
+            ${createPlayerCardHtml(p[7], 7, isUser)}
+            ${createPlayerCardHtml(p[8], 8, isUser)}`;
+}
+
+function showWinnerScreen() {
         const team = db.teams[db.finaleWinner];
         let allPlayers = [];
         Object.keys(db.teams).forEach(tName => {
@@ -1218,7 +1454,6 @@ function renderRoster(t) {
         const topProducer = [...allPlayers].sort((a, b) => b.b - a.b || b.g - a.g)[0];
         
         const topScorerPhoto = formatFileName(topScorer.n);
-        
         const topProducerPhoto = formatFileName(topProducer.n);
 
         document.getElementById('app').innerHTML = `
